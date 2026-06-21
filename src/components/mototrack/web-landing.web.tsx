@@ -1,10 +1,10 @@
-import {
-    Activity,
-    Brain,
-    ChevronRight,
-    Shield,
-} from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import {
+  Activity,
+  Brain,
+  ChevronRight,
+  Shield,
+} from 'lucide-react-native';
 import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
 import { MotorcycleSVG } from '@/components/mototrack/motorcycle-svg';
@@ -83,7 +83,7 @@ export function WebLanding() {
         <View style={[styles.badge, isLarge && styles.badgeLarge]}>
           <View style={styles.badgeDot} />
           <Text style={styles.badgeText}>
-            Bloqueo Estratégico y Arquitectura Técnica — Sprint 3 Completado
+
           </Text>
         </View>
 
@@ -104,7 +104,7 @@ export function WebLanding() {
                 <ChevronRight size={14} color={MotoTrackColors.light.background} />
               </Pressable>
               <Pressable style={styles.secondaryBtn}>
-                <Text style={styles.secondaryBtnText}>VER DEMO</Text>
+             
               </Pressable>
             </View>
           </View>
@@ -160,7 +160,6 @@ export function WebLanding() {
       <View style={styles.ctaBand}>
         <View style={[styles.ctaInner, isMedium && styles.ctaInnerMedium]}>
           <View>
-            <Text style={styles.ctaEyebrow}>PRÓXIMAMENTE EN MÉXICO</Text>
             <Text style={[styles.ctaTitle, isMedium && styles.ctaTitleLarge]}>
               Tu moto merece un balance general.
             </Text>

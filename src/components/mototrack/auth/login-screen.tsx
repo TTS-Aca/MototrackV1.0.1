@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { useRouter, type Href } from 'expo-router';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
 import {
@@ -120,6 +120,16 @@ export function LoginScreen() {
           
         </Text>
 
+        <View style={styles.workshopCard}>
+          <Text style={styles.workshopTitle}>¿Tienes un taller?</Text>
+          <Text style={styles.workshopCopy}>
+            Registra tu negocio para que motociclistas te encuentren cerca.
+          </Text>
+          <Pressable onPress={() => router.push('/taller-register' as Href)}>
+            <Text style={styles.switchLink}>¿Eres taller? Regístrate aquí</Text>
+          </Pressable>
+        </View>
+
         <View style={styles.switchRow}>
           <Text style={styles.switchText}>¿Aún no tienes cuenta? </Text>
           <Pressable onPress={() => router.push('/register')}>
@@ -240,6 +250,24 @@ function createStyles(theme: MotoTrackTheme) {
       lineHeight: 16,
       color: theme.textMuted,
       textAlign: 'center',
+    },
+    workshopCard: {
+      gap: 8,
+      padding: 16,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: theme.border,
+      backgroundColor: theme.surface,
+    },
+    workshopTitle: {
+      fontSize: 14,
+      fontWeight: '700',
+      color: theme.text,
+    },
+    workshopCopy: {
+      fontSize: 12,
+      color: theme.textSecondary,
+      lineHeight: 17,
     },
     switchRow: {
       flexDirection: 'row',

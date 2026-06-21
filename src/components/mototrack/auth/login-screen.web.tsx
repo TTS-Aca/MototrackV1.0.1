@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { useRouter, type Href } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AuthField } from '@/components/mototrack/auth/auth-field.web';
@@ -58,6 +58,16 @@ export function LoginScreen() {
       <AuthDivider />
       <GoogleButton />
 
+      <View style={styles.workshopCard}>
+        <Text style={styles.workshopTitle}>¿Tienes un taller?</Text>
+        <Text style={styles.workshopCopy}>
+          Registra tu negocio para que motociclistas te encuentren cerca.
+        </Text>
+        <Pressable onPress={() => router.push('/taller-register' as Href)}>
+          <Text style={styles.switchLink}>¿Eres taller? Regístrate aquí</Text>
+        </Pressable>
+      </View>
+
       <View style={styles.switchRow}>
         <Text style={styles.switchText}>¿Aún no tienes cuenta? </Text>
         <Pressable onPress={() => router.push('/register')}>
@@ -101,6 +111,23 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.85,
+  },
+  workshopCard: {
+    gap: 8,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: AuthColors.border,
+    backgroundColor: AuthColors.surface,
+  },
+  workshopTitle: {
+    fontFamily: Fonts.serif,
+    fontSize: 20,
+    color: AuthColors.text,
+  },
+  workshopCopy: {
+    fontSize: 13,
+    color: AuthColors.textMuted,
+    lineHeight: 18,
   },
   switchRow: {
     flexDirection: 'row',
