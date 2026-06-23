@@ -52,6 +52,9 @@ function RootLayoutNav() {
         <Stack.Screen name="perfil/mis-datos" />
         <Stack.Screen name="perfil/terminos" />
         <Stack.Screen name="perfil/privacidad" />
+        <Stack.Screen name="estado-moto" />
+        <Stack.Screen name="gasto-mes" />
+        <Stack.Screen name="insight-ia" />
       </Stack>
     </ThemeProvider>
   );

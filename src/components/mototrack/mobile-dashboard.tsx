@@ -17,6 +17,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemeToggleButton } from '@/components/mototrack/theme-toggle-button';
 import { MotorcycleSVG } from '@/components/mototrack/motorcycle-svg';
 import { ProfileMenu } from '@/components/mototrack/profile-menu';
+import { AI_INSIGHTS, MOTO_STATUS, MONTHLY_EXPENSE, formatCurrency } from '@/constants/dashboard-insights';
 import type { MotoTrackTheme } from '@/constants/mototrack-theme';
 import { useAuth } from '@/contexts/auth-context';
 import { useMotorcycle } from '@/contexts/motorcycle-context';
@@ -117,33 +118,50 @@ export function MobileDashboard() {
               </View>
 
               <View style={styles.grid}>
-                <View style={styles.card}>
-                  <Text style={styles.cardLabel}>ESTADO DE MOTO</Text>
-                  <View style={styles.semaforo}>
-                    <View style={[styles.semaforoDot, styles.semaforoGreen]} />
-                    <View style={[styles.semaforoDot, styles.semaforoYellow]} />
-                    <View style={[styles.semaforoDot, styles.semaforoRed]} />
+                <Pressable
+                  style={({ pressed }) => [styles.gridItem, pressed && styles.pressed]}
+                  onPress={() => router.push('/estado-moto' as Href)}>
+                  <View style={styles.card}>
+                    <Text style={styles.cardLabel}>ESTADO DE MOTO</Text>
+                    <View style={styles.semaforo}>
+                      <View style={[styles.semaforoDot, styles.semaforoGreen]} />
+                      <View style={[styles.semaforoDot, styles.semaforoYellow]} />
+                      <View style={[styles.semaforoDot, styles.semaforoRed]} />
+                    </View>
+                    <Text style={styles.statusOptimal}>{MOTO_STATUS.label}</Text>
                   </View>
-                  <Text style={styles.statusOptimal}>Óptima</Text>
-                </View>
+                </Pressable>
 
-                <View style={styles.card}>
-                  <Text style={styles.cardLabel}>GASTO / MES</Text>
-                  <Text style={styles.expenseAmount}>$7.65</Text>
-                  <View style={styles.expenseTrend}>
-                    <ArrowUpRight size={12} color={theme.orange400} />
-                    <Text style={styles.expenseTrendText}>+22% vs jun</Text>
+                <Pressable
+                  style={({ pressed }) => [styles.gridItem, pressed && styles.pressed]}
+                  onPress={() => router.push('/gasto-mes' as Href)}>
+                  <View style={styles.card}>
+                    <Text style={styles.cardLabel}>GASTO / MES</Text>
+                    <Text style={styles.expenseAmount}>
+                      {formatCurrency(MONTHLY_EXPENSE.total)}
+                    </Text>
+                    <View style={styles.expenseTrend}>
+                      <ArrowUpRight size={12} color={theme.orange400} />
+                      <Text style={styles.expenseTrendText}>
+                        +{MONTHLY_EXPENSE.trendPercent}% {MONTHLY_EXPENSE.trendLabel}
+                      </Text>
+                    </View>
                   </View>
-                </View>
+                </Pressable>
               </View>
 
-              <View style={[styles.card, styles.insightCard]}>
-                <Text style={styles.cardLabel}>INSIGHT IA · UNA LÍNEA</Text>
-                <Text style={styles.insightText}>
-                  Estás gastando <Text style={styles.insightHighlight}>22% más</Text> en gasolina este
-                  mes.
-                </Text>
-              </View>
+              <Pressable
+                style={({ pressed }) => [pressed && styles.pressed]}
+                onPress={() => router.push('/insight-ia' as Href)}>
+                <View style={[styles.card, styles.insightCard]}>
+                  <Text style={styles.cardLabel}>INSIGHT IA · UNA LÍNEA</Text>
+                  <Text style={styles.insightText}>
+                    <Text style={styles.insightHighlight}>{AI_INSIGHTS.headline.title}</Text>
+                    {' · '}
+                    {AI_INSIGHTS.headline.teaser}
+                  </Text>
+                </View>
+              </Pressable>
 
               <View style={[styles.card, styles.maintenanceCard]}>
                 <View style={styles.maintenanceCopy}>
@@ -372,8 +390,10 @@ function createStyles(theme: MotoTrackTheme) {
       flexDirection: 'row',
       gap: 10,
     },
-    card: {
+    gridItem: {
       flex: 1,
+    },
+    card: {
       backgroundColor: theme.surface,
       borderRadius: 16,
       padding: 14,
@@ -399,10 +419,6 @@ function createStyles(theme: MotoTrackTheme) {
     },
     semaforoGreen: {
       backgroundColor: theme.green400,
-      shadowColor: theme.green400,
-      shadowOpacity: 0.7,
-      shadowRadius: 8,
-      shadowOffset: { width: 0, height: 0 },
     },
     semaforoYellow: {
       backgroundColor: 'rgba(250, 204, 21, 0.15)',
@@ -434,7 +450,6 @@ function createStyles(theme: MotoTrackTheme) {
       color: theme.orange400,
     },
     insightCard: {
-      flex: undefined,
       borderLeftWidth: 2,
       borderLeftColor: theme.orange500,
       padding: 16,
@@ -449,7 +464,6 @@ function createStyles(theme: MotoTrackTheme) {
       fontWeight: '600',
     },
     maintenanceCard: {
-      flex: undefined,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
