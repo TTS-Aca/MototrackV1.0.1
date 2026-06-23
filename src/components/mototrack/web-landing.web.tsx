@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { useRouter, type Href } from 'expo-router';
 import {
   Activity,
   Brain,
@@ -11,6 +11,7 @@ import { MotorcycleSVG } from '@/components/mototrack/motorcycle-svg';
 import { PhoneFrame } from '@/components/mototrack/phone-frame.web';
 import { ThemeToggleButton } from '@/components/mototrack/theme-toggle-button';
 import { MotoTrackColors } from '@/constants/mototrack-colors';
+import { PRICING_PLANS, PRICING_ROWS, PRICING_TAGLINE } from '@/constants/pricing-plans';
 import { Fonts } from '@/constants/theme';
 import { useMotoTrackTheme } from '@/contexts/theme-mode-context';
 
@@ -47,6 +48,12 @@ export function WebLanding() {
   const isLarge = width >= 1024;
   const isMedium = width >= 768;
 
+  const scrollToSection = (id: string) => {
+    if (typeof document !== 'undefined') {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <ScrollView
       style={[styles.root, { backgroundColor: theme.background }]}
@@ -65,7 +72,11 @@ export function WebLanding() {
           <View style={styles.navRight}>
             {isMedium &&
               navItems.map((item) => (
-                <Pressable key={item}>
+                <Pressable
+                  key={item}
+                  onPress={() => {
+                    if (item === 'Precios') scrollToSection('precios');
+                  }}>
                   <Text style={[styles.navLink, { color: theme.textTertiary }]}>{item}</Text>
                 </Pressable>
               ))}
@@ -154,6 +165,89 @@ export function WebLanding() {
               </View>
             </View>
           ))}
+        </View>
+      </View>
+
+      <View nativeID="precios" style={styles.pricingSection}>
+        <View style={styles.pricingHeader}>
+          <Text style={styles.pricingEyebrow}>PRECIOS</Text>
+          <Text style={[styles.pricingTitle, isMedium && styles.pricingTitleLarge]}>
+            Elige el plan para tu moto.
+          </Text>
+          <Text style={styles.pricingSubtitle}>{PRICING_TAGLINE}</Text>
+        </View>
+
+        {isMedium ? (
+          <View style={styles.pricingTable}>
+            <View style={styles.pricingTableHeader}>
+              <View style={styles.pricingTableLabelCol} />
+              {PRICING_PLANS.map((plan) => (
+                <View
+                  key={plan.id}
+                  style={[styles.pricingTableHeadCol, plan.highlighted && styles.pricingTableHeadHighlight]}>
+                  <Text style={styles.pricingPlanName}>{plan.name}</Text>
+                  {plan.highlighted ? (
+                    <Text style={styles.pricingPlanBadge}>RECOMENDADO</Text>
+                  ) : null}
+                </View>
+              ))}
+            </View>
+            {PRICING_ROWS.map(({ key, label }) => (
+              <View key={key} style={styles.pricingTableRow}>
+                <View style={styles.pricingTableLabelCol}>
+                  <Text style={styles.pricingRowLabel}>{label}</Text>
+                </View>
+                {PRICING_PLANS.map((plan) => (
+                  <View
+                    key={`${plan.id}-${key}`}
+                    style={[styles.pricingTableCell, plan.highlighted && styles.pricingTableCellHighlight]}>
+                    <Text style={[styles.pricingCellText, key === 'price' && styles.pricingCellPrice]}>
+                      {key === 'price'
+                        ? `${plan.price}${plan.priceNote ? `\n${plan.priceNote}` : ''}`
+                        : plan[key]}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            ))}
+          </View>
+        ) : (
+          <View style={styles.pricingCards}>
+            {PRICING_PLANS.map((plan) => (
+              <View
+                key={plan.id}
+                style={[styles.pricingCard, plan.highlighted && styles.pricingCardHighlight]}>
+                <View style={styles.pricingCardHeader}>
+                  <Text style={styles.pricingPlanName}>{plan.name}</Text>
+                  {plan.highlighted ? (
+                    <Text style={styles.pricingPlanBadge}>RECOMENDADO</Text>
+                  ) : null}
+                </View>
+                <Text style={styles.pricingCardPrice}>{plan.price}</Text>
+                {plan.priceNote ? <Text style={styles.pricingCardPriceNote}>{plan.priceNote}</Text> : null}
+                {PRICING_ROWS.filter((row) => row.key !== 'price').map(({ key, label }) => (
+                  <View key={key} style={styles.pricingCardRow}>
+                    <Text style={styles.pricingRowLabel}>{label}</Text>
+                    <Text style={styles.pricingCellText}>{plan[key]}</Text>
+                  </View>
+                ))}
+              </View>
+            ))}
+          </View>
+        )}
+
+        <View style={styles.pricingActions}>
+          <Pressable
+            style={styles.primaryBtn}
+            onPress={() => router.push('/register')}>
+            <Text style={styles.primaryBtnText}>EMPEZAR GRATIS</Text>
+            <ChevronRight size={14} color={MotoTrackColors.light.background} />
+          </Pressable>
+          <Pressable
+            style={styles.secondaryBtn}
+            onPress={() => router.push('/taller-register' as Href)}>
+            <Text style={styles.secondaryBtnText}>REGISTRAR MI TALLER</Text>
+          </Pressable>
         </View>
       </View>
 
@@ -492,6 +586,163 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.mono,
     fontSize: 11,
     color: MotoTrackColors.light.mutedForeground,
+  },
+  pricingSection: {
+    maxWidth: 1280,
+    width: '100%',
+    alignSelf: 'center',
+    paddingHorizontal: 24,
+    paddingTop: 24,
+    paddingBottom: 80,
+    gap: 40,
+    borderTopWidth: 1,
+    borderTopColor: MotoTrackColors.light.border,
+  },
+  pricingHeader: {
+    gap: 12,
+    maxWidth: 640,
+  },
+  pricingEyebrow: {
+    fontFamily: Fonts.mono,
+    fontSize: 11,
+    letterSpacing: 2,
+    color: MotoTrackColors.orange600,
+  },
+  pricingTitle: {
+    fontFamily: Fonts.serif,
+    fontSize: 32,
+    lineHeight: 38,
+    color: MotoTrackColors.light.foreground,
+  },
+  pricingTitleLarge: {
+    fontSize: 40,
+    lineHeight: 46,
+  },
+  pricingSubtitle: {
+    fontFamily: Fonts.mono,
+    fontSize: 13,
+    color: MotoTrackColors.light.mutedForeground,
+    lineHeight: 20,
+  },
+  pricingTable: {
+    borderWidth: 1,
+    borderColor: MotoTrackColors.light.border,
+    backgroundColor: MotoTrackColors.light.background,
+  },
+  pricingTableHeader: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: MotoTrackColors.light.border,
+    backgroundColor: MotoTrackColors.light.accent,
+  },
+  pricingTableLabelCol: {
+    width: 160,
+    padding: 16,
+    justifyContent: 'center',
+  },
+  pricingTableHeadCol: {
+    flex: 1,
+    padding: 20,
+    alignItems: 'center',
+    gap: 6,
+    borderLeftWidth: 1,
+    borderLeftColor: MotoTrackColors.light.border,
+  },
+  pricingTableHeadHighlight: {
+    backgroundColor: MotoTrackColors.light.orange50,
+  },
+  pricingPlanName: {
+    fontFamily: Fonts.mono,
+    fontSize: 13,
+    letterSpacing: 2,
+    fontWeight: '700',
+    color: MotoTrackColors.light.foreground,
+  },
+  pricingPlanBadge: {
+    fontFamily: Fonts.mono,
+    fontSize: 9,
+    letterSpacing: 1,
+    color: MotoTrackColors.light.orange700,
+    backgroundColor: MotoTrackColors.light.orange50,
+    borderWidth: 1,
+    borderColor: MotoTrackColors.light.orange200,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  pricingTableRow: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: MotoTrackColors.light.border,
+  },
+  pricingTableCell: {
+    flex: 1,
+    padding: 16,
+    borderLeftWidth: 1,
+    borderLeftColor: MotoTrackColors.light.border,
+    justifyContent: 'center',
+  },
+  pricingTableCellHighlight: {
+    backgroundColor: 'rgba(255, 247, 237, 0.5)',
+  },
+  pricingRowLabel: {
+    fontFamily: Fonts.mono,
+    fontSize: 10,
+    letterSpacing: 1.2,
+    color: MotoTrackColors.light.mutedForeground,
+    textTransform: 'uppercase',
+  },
+  pricingCellText: {
+    fontSize: 13,
+    lineHeight: 20,
+    color: MotoTrackColors.light.foreground,
+  },
+  pricingCellPrice: {
+    fontFamily: Fonts.serif,
+    fontSize: 24,
+    lineHeight: 30,
+    fontWeight: '700',
+  },
+  pricingCards: {
+    gap: 16,
+  },
+  pricingCard: {
+    borderWidth: 1,
+    borderColor: MotoTrackColors.light.border,
+    backgroundColor: MotoTrackColors.light.background,
+    padding: 24,
+    gap: 12,
+  },
+  pricingCardHighlight: {
+    borderColor: MotoTrackColors.light.orange200,
+    backgroundColor: MotoTrackColors.light.orange50,
+  },
+  pricingCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  pricingCardPrice: {
+    fontFamily: Fonts.serif,
+    fontSize: 36,
+    color: MotoTrackColors.light.foreground,
+  },
+  pricingCardPriceNote: {
+    fontFamily: Fonts.mono,
+    fontSize: 11,
+    color: MotoTrackColors.light.mutedForeground,
+    marginTop: -4,
+  },
+  pricingCardRow: {
+    gap: 6,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: MotoTrackColors.light.border,
+  },
+  pricingActions: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
   },
   ctaBand: {
     borderTopWidth: 1,

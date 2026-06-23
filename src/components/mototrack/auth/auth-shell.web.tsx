@@ -8,10 +8,11 @@ import { Fonts } from '@/constants/theme';
 
 type AuthShellProps = {
   backHref?: string;
+  wide?: boolean;
   children: ReactNode;
 };
 
-export function AuthShell({ backHref = '/', children }: AuthShellProps) {
+export function AuthShell({ backHref = '/', wide = false, children }: AuthShellProps) {
   const router = useRouter();
 
   return (
@@ -34,7 +35,7 @@ export function AuthShell({ backHref = '/', children }: AuthShellProps) {
           </View>
         </View>
 
-        <View style={styles.main}>{children}</View>
+        <View style={[styles.main, wide && styles.mainWide]}>{children}</View>
 
         <View style={styles.footer}>
           <View style={styles.footerTags}>
@@ -101,7 +102,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingTop: 24,
     paddingBottom: 32,
-    maxWidth: 480,
+    maxWidth: 960,
     width: '100%',
     alignSelf: 'center',
   },
@@ -144,6 +145,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 24,
     gap: 24,
+  },
+  mainWide: {
+    maxWidth: 960,
   },
   badge: {
     flexDirection: 'row',
