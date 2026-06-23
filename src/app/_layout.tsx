@@ -6,16 +6,19 @@ import { ThemeModeProvider, useMotoTrackTheme } from '@/contexts/theme-mode-cont
 import { AuthProvider } from '@/contexts/auth-context';
 import { MotorcycleProvider } from '@/contexts/motorcycle-context';
 import { WorkshopProvider } from '@/contexts/workshop-context';
+import { UserProfileProvider } from '@/contexts/user-profile-context';
 
 export default function RootLayout() {
   return (
     <ThemeModeProvider>
       <AuthProvider>
-        <WorkshopProvider>
-          <MotorcycleProvider>
-            <RootLayoutNav />
-          </MotorcycleProvider>
-        </WorkshopProvider>
+        <UserProfileProvider>
+          <WorkshopProvider>
+            <MotorcycleProvider>
+              <RootLayoutNav />
+            </MotorcycleProvider>
+          </WorkshopProvider>
+        </UserProfileProvider>
       </AuthProvider>
     </ThemeModeProvider>
   );
@@ -44,6 +47,11 @@ function RootLayoutNav() {
         <Stack.Screen name="moto-setup" />
         <Stack.Screen name="taller-register" />
         <Stack.Screen name="taller-profile" />
+        <Stack.Screen name="perfil/editar" />
+        <Stack.Screen name="perfil/contacto" />
+        <Stack.Screen name="perfil/mis-datos" />
+        <Stack.Screen name="perfil/terminos" />
+        <Stack.Screen name="perfil/privacidad" />
       </Stack>
     </ThemeProvider>
   );

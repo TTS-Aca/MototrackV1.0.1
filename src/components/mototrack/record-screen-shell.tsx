@@ -28,6 +28,7 @@ type RecordScreenShellProps = {
   saving?: boolean;
   saveLabel?: string;
   hideMotoBadge?: boolean;
+  hideSaveButton?: boolean;
 };
 
 export function RecordScreenShell({
@@ -40,6 +41,7 @@ export function RecordScreenShell({
   saving = false,
   saveLabel = 'GUARDAR REGISTRO',
   hideMotoBadge = false,
+  hideSaveButton = false,
 }: RecordScreenShellProps) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -66,7 +68,10 @@ export function RecordScreenShell({
       </View>
 
       <ScrollView
-        contentContainerStyle={[styles.scroll, { paddingBottom: Math.max(insets.bottom, 16) + 80 }]}
+        contentContainerStyle={[
+          styles.scroll,
+          { paddingBottom: Math.max(insets.bottom, 16) + (hideSaveButton ? 0 : 80) },
+        ]}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}>
         <View style={styles.hero}>
@@ -82,18 +87,20 @@ export function RecordScreenShell({
         <View style={styles.form}>{children}</View>
       </ScrollView>
 
-      <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 16) }]}>
-        <Pressable
-          style={({ pressed }) => [styles.saveBtn, pressed && styles.pressed]}
-          onPress={onSave}
-          disabled={saving}>
-          {saving ? (
-            <ActivityIndicator color={theme.white} />
-          ) : (
-            <Text style={styles.saveBtnText}>{saveLabel}</Text>
-          )}
-        </Pressable>
-      </View>
+      {!hideSaveButton ? (
+        <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 16) }]}>
+          <Pressable
+            style={({ pressed }) => [styles.saveBtn, pressed && styles.pressed]}
+            onPress={onSave}
+            disabled={saving}>
+            {saving ? (
+              <ActivityIndicator color={theme.white} />
+            ) : (
+              <Text style={styles.saveBtnText}>{saveLabel}</Text>
+            )}
+          </Pressable>
+        </View>
+      ) : null}
     </KeyboardAvoidingView>
   );
 }

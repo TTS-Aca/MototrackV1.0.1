@@ -3,6 +3,7 @@ import {
   Bike,
   Fuel,
   LogOut,
+  Menu,
   Plus,
   Settings,
   Wrench,
@@ -15,6 +16,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ThemeToggleButton } from '@/components/mototrack/theme-toggle-button';
 import { MotorcycleSVG } from '@/components/mototrack/motorcycle-svg';
+import { ProfileMenu } from '@/components/mototrack/profile-menu';
 import type { MotoTrackTheme } from '@/constants/mototrack-theme';
 import { useAuth } from '@/contexts/auth-context';
 import { useMotorcycle } from '@/contexts/motorcycle-context';
@@ -35,6 +37,7 @@ function userDisplayName(email: string | null): string {
 
 export function MobileDashboard() {
   const [quickOpen, setQuickOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { signOut, userEmail } = useAuth();
@@ -59,6 +62,13 @@ export function MobileDashboard() {
         <View style={styles.statusActions}>
           <ThemeToggleButton />
           <Pressable
+            onPress={() => setMenuOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel="Abrir menú de perfil"
+            style={({ pressed }) => [styles.menuBtn, pressed && styles.pressed]}>
+            <Menu size={16} color={theme.textTertiary} strokeWidth={2} />
+          </Pressable>
+          <Pressable
             onPress={handleSignOut}
             accessibilityRole="button"
             accessibilityLabel="Cerrar sesión"
@@ -67,6 +77,8 @@ export function MobileDashboard() {
           </Pressable>
         </View>
       </View>
+
+      <ProfileMenu visible={menuOpen} onClose={() => setMenuOpen(false)} />
 
       <View style={[styles.body, { paddingBottom: Math.max(insets.bottom, 16) }]}>
         {!hasMotorcycle ? (
@@ -231,6 +243,13 @@ function createStyles(theme: MotoTrackTheme) {
       gap: 4,
     },
     signOutBtn: {
+      width: 32,
+      height: 32,
+      borderRadius: 10,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    menuBtn: {
       width: 32,
       height: 32,
       borderRadius: 10,

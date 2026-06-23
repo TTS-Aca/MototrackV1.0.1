@@ -3,17 +3,19 @@ import {
   Clock,
   LogOut,
   MapPin,
+  Menu,
   Phone,
   Settings,
   Truck,
   Wrench,
 } from 'lucide-react-native';
 import { useRouter, type Href } from 'expo-router';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ThemeToggleButton } from '@/components/mototrack/theme-toggle-button';
+import { ProfileMenu } from '@/components/mototrack/profile-menu';
 import type { MotoTrackTheme } from '@/constants/mototrack-theme';
 import { useAuth } from '@/contexts/auth-context';
 import { useMotoTrackTheme } from '@/contexts/theme-mode-context';
@@ -26,6 +28,7 @@ export function WorkshopDashboard() {
   const { workshop } = useWorkshop();
   const { theme } = useMotoTrackTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleSignOut = async () => {
     await signOut();
@@ -64,6 +67,13 @@ export function WorkshopDashboard() {
         <View style={styles.statusActions}>
           <ThemeToggleButton />
           <Pressable
+            onPress={() => setMenuOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel="Abrir menú de perfil"
+            style={({ pressed }) => [styles.menuBtn, pressed && styles.pressed]}>
+            <Menu size={16} color={theme.textTertiary} strokeWidth={2} />
+          </Pressable>
+          <Pressable
             onPress={handleSignOut}
             accessibilityRole="button"
             accessibilityLabel="Cerrar sesión"
@@ -72,6 +82,8 @@ export function WorkshopDashboard() {
           </Pressable>
         </View>
       </View>
+
+      <ProfileMenu visible={menuOpen} onClose={() => setMenuOpen(false)} />
 
       <ScrollView
         contentContainerStyle={[
@@ -203,6 +215,13 @@ function createStyles(theme: MotoTrackTheme) {
       gap: 4,
     },
     signOutBtn: {
+      width: 32,
+      height: 32,
+      borderRadius: 10,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    menuBtn: {
       width: 32,
       height: 32,
       borderRadius: 10,
