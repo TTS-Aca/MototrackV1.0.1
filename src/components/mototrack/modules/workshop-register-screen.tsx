@@ -1,5 +1,5 @@
-import { Wrench } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import { Wrench } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
 import { Alert, Linking, Pressable, StyleSheet, Switch, Text, View } from 'react-native';
 
@@ -8,13 +8,15 @@ import { OptionChips } from '@/components/mototrack/option-chips';
 import { RecordField } from '@/components/mototrack/record-field';
 import { RecordScreenShell } from '@/components/mototrack/record-screen-shell';
 import { WorkshopMapPicker } from '@/components/mototrack/workshop-map-picker';
+import type { MotoTrackTheme } from '@/constants/mototrack-theme';
 import {
   DEFAULT_MAP_CENTER,
   OFFICIAL_BRANDS,
   WORKSHOP_BRANDS,
   defaultSchedule,
+  isValidRfc,
+  normalizeRfc,
 } from '@/constants/workshop';
-import type { MotoTrackTheme } from '@/constants/mototrack-theme';
 import { useAuth } from '@/contexts/auth-context';
 import { useMotoTrackTheme } from '@/contexts/theme-mode-context';
 import { useWorkshop } from '@/contexts/workshop-context';
@@ -31,7 +33,7 @@ export function WorkshopRegisterScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [taxId, setTaxId] = useState('');
+  const [rfc, setRfc] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [latitude, setLatitude] = useState(DEFAULT_MAP_CENTER.latitude);
@@ -40,8 +42,8 @@ export function WorkshopRegisterScreen() {
   const [schedule, setSchedule] = useState<DaySchedule[]>(defaultSchedule);
   const [offersTowService, setOffersTowService] = useState(false);
 
-  const handleTaxIdChange = (value: string) => {
-    setTaxId(value.replace(/[^\d-]/g, '').slice(0, 13));
+  const handleRfcChange = (value: string) => {
+    setRfc(normalizeRfc(value));
   };
 
   const handlePhoneChange = (value: string) => {
@@ -75,8 +77,8 @@ export function WorkshopRegisterScreen() {
       Alert.alert('Falta el nombre', 'Ingresa el nombre comercial del taller.');
       return;
     }
-    if (taxId.length < 10) {
-      Alert.alert('CUIT/RUT inválido', 'Ingresa un CUIT o RUT válido (mínimo 10 dígitos).');
+    if (!isValidRfc(rfc)) {
+      Alert.alert('RFC inválido', 'Ingresa un RFC válido de 12 o 13 caracteres.');
       return;
     }
     if (phone.length < 10) {
@@ -96,7 +98,7 @@ export function WorkshopRegisterScreen() {
     saveWorkshop({
       email: email.trim(),
       name: name.trim(),
-      taxId,
+      rfc,
       phone,
       address: address.trim(),
       latitude,
@@ -145,11 +147,11 @@ export function WorkshopRegisterScreen() {
         placeholder="Ej. Quintana Motor's"
       />
       <RecordField
-        label="CUIT / RUT"
-        value={taxId}
-        onChangeText={handleTaxIdChange}
-        placeholder="Para validación legal"
-        keyboardType="numeric"
+        label="RFC"
+        value={rfc}
+        onChangeText={handleRfcChange}
+        placeholder="Ej. ABC123456XY1"
+        autoCapitalize="characters"
       />
       <RecordField
         label="TELÉFONO DE CONTACTO"

@@ -9,7 +9,7 @@ export type DaySchedule = {
 
 export type Workshop = {
   name: string;
-  taxId: string;
+  rfc: string;
   phone: string;
   address: string;
   latitude: number;

@@ -32,3 +32,11 @@ export const DEFAULT_MAP_CENTER = {
   latitude: 21.1619,
   longitude: -86.8515,
 };
+
+export function normalizeRfc(value: string): string {
+  return value.toUpperCase().replace(/[^A-ZÑ&0-9]/g, '').slice(0, 13);
+}
+
+export function isValidRfc(rfc: string): boolean {
+  return rfc.length === 12 || rfc.length === 13;
+}

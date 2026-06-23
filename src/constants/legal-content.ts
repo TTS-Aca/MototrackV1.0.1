@@ -39,7 +39,7 @@ MotoTrack trata tus datos personales conforme a la legislación aplicable en Mé
 2. Datos que recopilamos
 • Datos de cuenta: nombre, correo, teléfono y año de nacimiento.
 • Datos de moto: marca, modelo, kilometraje y registros de gastos.
-• Datos de taller (si aplica): ubicación, horarios, CUIT/RUT y fotos del negocio.
+• Datos de taller (si aplica): ubicación, horarios, RFC y fotos del negocio.
 • Datos técnicos: tipo de dispositivo y preferencias de la app.
 
 3. Finalidades

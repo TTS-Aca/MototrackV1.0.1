@@ -20,8 +20,10 @@ import { AuthColors } from '@/constants/auth-theme';
 import { Fonts } from '@/constants/theme';
 import {
   DEFAULT_MAP_CENTER,
-  WORKSHOP_BRANDS,
   defaultSchedule,
+  isValidRfc,
+  normalizeRfc,
+  WORKSHOP_BRANDS,
 } from '@/constants/workshop';
 import { useAuth } from '@/contexts/auth-context';
 import { useWorkshop } from '@/contexts/workshop-context';
@@ -48,7 +50,7 @@ export function WorkshopRegisterScreen() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
-  const [taxId, setTaxId] = useState('');
+  const [rfc, setRfc] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [latitude, setLatitude] = useState(DEFAULT_MAP_CENTER.latitude);
@@ -96,8 +98,8 @@ export function WorkshopRegisterScreen() {
         Alert.alert('Nombre requerido', 'Ingresa el nombre comercial del taller.');
         return false;
       }
-      if (taxId.replace(/\D/g, '').length < 10) {
-        Alert.alert('CUIT/RUT inválido', 'Ingresa un identificador fiscal válido.');
+      if (!isValidRfc(rfc)) {
+        Alert.alert('RFC inválido', 'Ingresa un RFC válido de 12 o 13 caracteres.');
         return false;
       }
       if (phone.replace(/\D/g, '').length < 10) {
@@ -132,7 +134,7 @@ export function WorkshopRegisterScreen() {
     saveWorkshop({
       email: email.trim(),
       name: name.trim(),
-      taxId: taxId.replace(/[^\d-]/g, ''),
+      rfc: normalizeRfc(rfc),
       phone: phone.replace(/\D/g, ''),
       address: address.trim(),
       latitude,
@@ -252,11 +254,11 @@ export function WorkshopRegisterScreen() {
               <View style={styles.rowTwo}>
                 <View style={styles.fieldHalf}>
                   <AuthField
-                    label="CUIT / RUT"
-                    value={taxId}
-                    onChangeText={(v) => setTaxId(v.replace(/[^\d-]/g, '').slice(0, 13))}
-                    placeholder="Identificador fiscal"
-                    keyboardType="numeric"
+                    label="RFC"
+                    value={rfc}
+                    onChangeText={(v) => setRfc(normalizeRfc(v))}
+                    placeholder="Ej. ABC123456XY1"
+                    autoCapitalize="characters"
                   />
                 </View>
                 <View style={styles.fieldHalf}>
