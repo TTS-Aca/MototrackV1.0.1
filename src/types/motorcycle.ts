@@ -4,6 +4,7 @@ export type Motorcycle = {
   year: string;
   mileage: string;
   fuelType: string;
+  serialNumber?: string;
   lastOilChangeKm?: string;
   plates?: string;
   nickname?: string;

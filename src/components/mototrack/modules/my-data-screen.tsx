@@ -46,7 +46,12 @@ export function MyDataScreen() {
       <DataRow label="TELÉFONO" value={phoneDisplay} />
       <DataRow label="TIPO DE CUENTA" value={accountType === 'workshop' ? 'Taller' : 'Motociclista'} />
       {motorcycle ? (
-        <DataRow label="MOTO REGISTRADA" value={motorcycleDisplayName(motorcycle)} />
+        <>
+          <DataRow label="MOTO REGISTRADA" value={motorcycleDisplayName(motorcycle)} />
+          {motorcycle.serialNumber ? (
+            <DataRow label="NÚMERO DE SERIE" value={motorcycle.serialNumber} />
+          ) : null}
+        </>
       ) : null}
       <Text style={noteStyles.note}>
         Puedes solicitar la rectificación o eliminación de tus datos desde “Hablar con alguien”.

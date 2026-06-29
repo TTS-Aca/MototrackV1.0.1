@@ -65,7 +65,7 @@ export function WebLanding() {
               <Activity size={14} color={theme.background} strokeWidth={2.5} />
             </View>
             <Text style={[styles.navBrandText, { color: theme.textTertiary }]}>
-              MotoTrack × Quintana Motor's
+              MotoTrack
             </Text>
           </View>
 

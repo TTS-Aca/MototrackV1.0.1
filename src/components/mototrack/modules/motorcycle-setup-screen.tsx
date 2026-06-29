@@ -27,6 +27,7 @@ export function MotorcycleSetupScreen() {
   const [year, setYear] = useState('');
   const [mileage, setMileage] = useState('');
   const [fuelType, setFuelType] = useState<string>(FUEL_TYPES[0]);
+  const [serialNumber, setSerialNumber] = useState('');
   const [lastOilChangeKm, setLastOilChangeKm] = useState('');
   const [plates, setPlates] = useState('');
   const [nickname, setNickname] = useState('');
@@ -83,6 +84,7 @@ export function MotorcycleSetupScreen() {
       year,
       mileage,
       fuelType,
+      serialNumber: serialNumber.trim() || undefined,
       lastOilChangeKm: lastOilChangeKm.trim() || undefined,
       plates: plates.trim() || undefined,
       nickname: nickname.trim() || undefined,
@@ -134,6 +136,14 @@ export function MotorcycleSetupScreen() {
         placeholder="2022"
         maxLength={4}
         hint={yearHint}
+      />
+      <RecordField
+        label="NÚMERO DE SERIE"
+        value={serialNumber}
+        onChangeText={setSerialNumber}
+        placeholder="Ej. 3H1KA5470KD123456"
+        autoCapitalize="characters"
+        hint="El que aparece en el marco o factura de tu moto"
       />
       <RecordField
         label="KILOMETRAJE ACTUAL (KM)"
