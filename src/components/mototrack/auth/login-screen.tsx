@@ -11,17 +11,20 @@ import {
   Text,
   TextInput,
   View,
+  Alert,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import type { MotoTrackTheme } from '@/constants/mototrack-theme';
 import { useAuth } from '@/contexts/auth-context';
+import { useWorkshop } from '@/contexts/workshop-context';
 import { useMotoTrackTheme } from '@/contexts/theme-mode-context';
+import type { MotoTrackTheme } from '@/constants/mototrack-theme';
 
 export function LoginScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { signIn } = useAuth();
+  const { saveWorkshop } = useWorkshop();
   const { theme } = useMotoTrackTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
@@ -31,10 +34,42 @@ export function LoginScreen() {
   const [submitting, setSubmitting] = useState(false);
 
   const handleSignIn = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Por favor ingresa tu correo y contraseña.');
+      return;
+    }
+
     setSubmitting(true);
     try {
-      await signIn(email);
-      router.replace('/');
+      const API_URL = 'http://192.168.1.4:8000/api/usuarios/login/';
+      
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.toLowerCase(), password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.access) {
+        // Guardamos el token (en app real iría a SecureStore)
+        const accountType = (data.rol === 'MECANICO' || data.is_workshop) ? 'workshop' : 'rider';
+        
+        if (data.is_workshop && data.taller_data) {
+          saveWorkshop({
+            email: email.trim().toLowerCase(),
+            ...data.taller_data
+          });
+        }
+
+        await signIn(email, accountType);
+        router.replace('/');
+      } else {
+        Alert.alert('Credenciales inválidas', 'El correo o la contraseña son incorrectos.');
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error de conexión', 'No se pudo contactar con el servidor. Verifica que Django esté encendido en la IP 192.168.1.4.');
     } finally {
       setSubmitting(false);
     }

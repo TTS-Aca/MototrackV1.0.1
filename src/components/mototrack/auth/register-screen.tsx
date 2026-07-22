@@ -12,6 +12,7 @@ import {
   Text,
   TextInput,
   View,
+  Alert,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -57,13 +58,50 @@ export function RegisterScreen() {
   };
 
   const handleRegister = async () => {
+    if (!email || !password || !nombres) {
+      Alert.alert('Error', 'Por favor completa al menos los nombres, el correo y la contraseña.');
+      return;
+    }
+
     setSubmitting(true);
     try {
-      const fallbackEmail = nombres
-        ? `${nombres.toLowerCase().replace(/\s+/g, '.')}@mototrack.mx`
-        : 'demo@mototrack.mx';
-      await signIn(email || fallbackEmail);
-      router.replace('/');
+      // Usamos localhost. Si pruebas en emulador Android, podrías necesitar cambiar 'localhost' a '10.0.2.2'
+      // o a la IP de tu computadora si pruebas desde un celular físico.
+      const API_URL = 'http://192.168.1.4:8000/api/usuarios/register/';
+      
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nombres,
+          apellido_paterno: apellidoPaterno,
+          apellido_materno: apellidoMaterno,
+          year_nacimiento: birthYear ? parseInt(birthYear) : null,
+          email: email.toLowerCase(),
+          codigo_pais: countryCode,
+          telefono: phone,
+          password: password,
+          rol: 'CLIENTE', 
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert('¡Éxito!', 'Tu cuenta ha sido creada en la base de datos.');
+        // Opcionalmente podemos iniciar sesión automáticamente aquí
+        await signIn(email);
+        router.replace('/');
+      } else {
+        // Mostramos el error que devuelva Django
+        const errorMsg = data.email ? `Email: ${data.email[0]}` : 'Verifica tus datos.';
+        Alert.alert('Error al registrar', errorMsg);
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error de conexión', 'No se pudo conectar con el servidor Django. Verifica que esté encendido.');
     } finally {
       setSubmitting(false);
     }
