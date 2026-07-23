@@ -64,66 +64,52 @@ export function WorkshopRegisterScreen() {
     Linking.openURL(`https://wa.me/52${phone}`);
   };
 
-  const handleSave = async () => {
-    if (!email.trim() || password.length < 6 || !name.trim() || !isValidRfc(rfc) || phone.length < 10 || !address.trim() || brands.length === 0) {
-      Alert.alert('Faltan datos', 'Por favor, llena todos los campos correctamente.');
+  const handleSave = () => {
+    if (!email.trim()) {
+      Alert.alert('Falta el correo', 'Ingresa el correo de acceso del taller.');
+      return;
+    }
+    if (password.length < 6) {
+      Alert.alert('Contraseña corta', 'Usa al menos 6 caracteres para la contraseña.');
+      return;
+    }
+    if (!name.trim()) {
+      Alert.alert('Falta el nombre', 'Ingresa el nombre comercial del taller.');
+      return;
+    }
+    if (!isValidRfc(rfc)) {
+      Alert.alert('RFC inválido', 'Ingresa un RFC válido de 12 o 13 caracteres.');
+      return;
+    }
+    if (phone.length < 10) {
+      Alert.alert('Teléfono inválido', 'Ingresa un teléfono de contacto de 10 dígitos.');
+      return;
+    }
+    if (!address.trim()) {
+      Alert.alert('Falta la dirección', 'Ingresa la dirección exacta del taller.');
+      return;
+    }
+    if (brands.length === 0) {
+      Alert.alert('Faltan marcas', 'Selecciona al menos una marca con la que trabajas.');
       return;
     }
 
     setSaving(true);
-    try {
-      const API_URL = 'http://192.168.1.4:8000/api/usuarios/taller/register/';
-      
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: email.trim().toLowerCase(),
-          password,
-          nombre_comercial: name.trim(),
-          rfc,
-          telefono_contacto: phone,
-          direccion: address.trim(),
-          latitud: latitude,
-          longitud: longitude,
-          marcas: brands,
-          horarios: schedule,
-          ofrece_remolque: offersTowService,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        Alert.alert('¡Taller Registrado!', 'Tu negocio ya está en MotoTrack.');
-        
-        // Guardar en el contexto local para que el Frontend sepa que existe y no nos pida registrar de nuevo
-        saveWorkshop({
-          email: email.trim(),
-          name: name.trim(),
-          rfc,
-          phone,
-          address: address.trim(),
-          latitude,
-          longitude,
-          brands,
-          schedule,
-          offersTowService,
-        });
-
-        await signIn(email.trim(), 'workshop');
-        router.replace('/');
-      } else {
-        const errorMsg = data.email ? `Email: ${data.email[0]}` : 
-                         data.rfc ? `RFC: ${data.rfc[0]}` : 'Verifica tus datos.';
-        Alert.alert('Error al registrar taller', errorMsg);
-      }
-    } catch (error) {
-      console.error(error);
-      Alert.alert('Error de conexión', 'No se pudo contactar con el servidor Django. Verifica que esté corriendo.');
-    } finally {
-      setSaving(false);
-    }
+    saveWorkshop({
+      email: email.trim(),
+      name: name.trim(),
+      rfc,
+      phone,
+      address: address.trim(),
+      latitude,
+      longitude,
+      brands,
+      schedule,
+      offersTowService,
+    });
+    signIn(email.trim(), 'workshop');
+    router.replace('/');
+    setSaving(false);
   };
 
   return (

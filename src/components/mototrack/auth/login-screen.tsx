@@ -52,15 +52,9 @@ export function LoginScreen() {
       const data = await response.json();
 
       if (response.ok && data.access) {
-        // Guardamos el token (en app real iría a SecureStore)
-        const accountType = (data.rol === 'MECANICO' || data.is_workshop) ? 'workshop' : 'rider';
-        
-        if (data.is_workshop && data.taller_data) {
-          saveWorkshop({
-            email: email.trim().toLowerCase(),
-            ...data.taller_data
-          });
-        }
+        // Lógica revertida para talleres: si el email contiene "taller", lo forzamos a taller (mockup)
+        const isWorkshop = email.toLowerCase().includes('taller') || email.toLowerCase().includes('workshop');
+        const accountType = isWorkshop ? 'workshop' : 'rider';
 
         await signIn(email, accountType);
         router.replace('/');
